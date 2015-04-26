@@ -1,4 +1,5 @@
 import rhinoscriptsyntax as rs
+import operator
 
 class Intersection():
     def __init__(self, obj):
@@ -32,7 +33,7 @@ class Slice():
 
     def move(self, offset):
       for inter in self.inters:
-        xform = rs.XformTranslation([offset,0,-abs(self.z)])
+        xform = rs.XformTranslation([offset,0,-self.z])
         rs.TransformObjects( inter.obj, xform, True )
         rs.HideObject (inter.obj)
       return self.getMaxWidth()
@@ -67,6 +68,10 @@ if __name__ == '__main__':
 
     print "I found "+str(len(slices))+" slices! "
     print "If this number is not correct change the tolerance."
+
+    slices = sorted(slices, key=operator.attrgetter('z'))
+
     for slice in slices:
         offset += slice.move(offset)+ margin
     print "Done"
+    
